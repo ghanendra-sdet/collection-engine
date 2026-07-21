@@ -76,4 +76,11 @@ The Collection Engine conceptually depends on / interacts with:
 - **Admin Portal** — configuration and monitoring
 - **Reporting** — merchant and internal analytics
 
+## 7. Next: The Full Customer Payment Journey
+
+Everything above describes the module conceptually. For the actual step-by-step flow — what a
+customer experiences paying via UPI vs. QR vs. Virtual Account vs. Payment Link vs. Manual
+Deposit, and what happens from a successful payment through to settlement — see
+[`business-flow.md`](./business-flow.md).
+
 See [`architecture-and-flow.md`](./architecture-and-flow.md) for the detailed flow diagrams.

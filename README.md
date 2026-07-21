@@ -114,6 +114,11 @@ automated test coverage across the transaction lifecycle.
 
 ## 🔄 How It Works — Business Flow
 
+> This section covers the internal QA/regression view (the screens a merchant navigates). For
+> the full **end-to-end customer payment journey** — including a detailed flow for each
+> collection type (UPI, QR, VAM, Payment Link, Manual Deposit), settlement, and onboarding — see
+> [`docs/business-flow.md`](./docs/business-flow.md).
+
 ### Merchant Regression Flow (highest-priority end-to-end scenario)
 
 ```
@@ -264,7 +269,8 @@ collection-engine/
 ├── README.md                     → This file
 ├── docs/
 │   ├── business-overview.md      → What Collection Engine is, glossary, cross-module map
-│   ├── architecture-and-flow.md  → Detailed merchant/admin flow diagrams
+│   ├── architecture-and-flow.md  → Internal QA/regression flow diagrams (dashboard, admin, states)
+│   ├── business-flow.md          → End-to-end customer payment journey per collection type, settlement, onboarding
 │   ├── feature-modules.md        → Full feature/screen inventory (Dashboard, Search, Collection Types, Reports)
 │   └── service-architecture.md   → Microservice-level decomposition & integration test boundaries
 ├── test-cases/

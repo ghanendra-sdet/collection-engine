@@ -1,8 +1,25 @@
 # Sample Defect Report — Collection Engine
 
-> Template + worked example using dummy data. Reflects the recurring defect themes commonly
-> found in Collection Engine regression: commercial/GST mismatches, ledger inconsistencies, and
-> settlement discrepancies.
+> Template + worked examples using dummy data. Reflects the recurring defect themes commonly
+> found in Collection Engine regression.
+
+## Defect Theme Taxonomy
+
+Recurring defect themes tracked for this module:
+
+- Ledger debit fee missing
+- Commercial calculation mismatch
+- GST mismatch
+- Settlement inconsistency
+- Report mismatch
+- Search/filter issue
+- Export issue
+- Permission issue
+- Validation issue
+- Dashboard issue
+- API validation issue
+
+**Severity categories used:** Minor, Major, Critical, Blocker.
 
 ---
 
@@ -74,6 +91,75 @@ issue even though the discrepancy is small per transaction.
 **Suggested Fix**
 Centralize the rounding rule in a single shared calculation function used by both the UI and the
 report generation service.
+
+---
+
+## Defect #3
+
+| Field | Value |
+|---|---|
+| **ID** | BUG-COL-1105 (sample) |
+| **Title** | Settlement report total doesn't match Ledger total for the same date range |
+| **Severity** | Critical |
+| **Module** | Collection → Settlement / Reports |
+| **Environment** | UAT (dummy data) |
+
+**Steps to Reproduce**
+1. Run a settlement cycle covering a set of dummy SUCCESS transactions
+2. Open the Settlement Report for that cycle's date range
+3. Independently sum the corresponding Ledger entries for the same date range
+
+**Expected Result**
+The Settlement Report total should exactly equal the sum of Ledger entries for the same
+transactions — settlement is, by definition, a reflection of the ledger.
+
+**Actual Result**
+The Settlement Report total is ₹1,240 higher than the Ledger sum. Investigation shows the
+Settlement Report includes a small number of transactions that were later reversed, while the
+Ledger correctly excludes them — the two services are reading from different snapshots of
+transaction state.
+
+**Impact**
+A merchant reconciling the Settlement Report against their own bank credit would see a mismatch
+they cannot explain — directly undermines trust in the platform's reporting.
+
+**Suggested Fix**
+Settlement Report generation should read from the same authoritative transaction-state source as
+the Ledger Service (or be generated *from* the Ledger directly), not from a separately-cached
+transaction snapshot.
+
+---
+
+## Defect #4
+
+| Field | Value |
+|---|---|
+| **ID** | BUG-COL-1131 (sample) |
+| **Title** | Transaction Search status filter returns stale results after a status change |
+| **Severity** | Major |
+| **Module** | Collection → Transaction Search |
+| **Environment** | UAT (dummy data) |
+
+**Steps to Reproduce**
+1. Search Transaction Search filtering by status = `DEEMED`
+2. In a separate session, that same transaction resolves to `SUCCESS`
+3. Refresh the original search (same filter, same page)
+
+**Expected Result**
+The now-`SUCCESS` transaction should disappear from the `DEEMED` filter results on refresh.
+
+**Actual Result**
+The transaction remains in the `DEEMED` filtered results after refresh — the search index/cache
+was not invalidated when the underlying transaction status changed.
+
+**Impact**
+Merchants investigating "stuck" transactions see incorrect, outdated results, which can lead to
+duplicate support inquiries or unnecessary manual investigation of transactions that already
+resolved successfully.
+
+**Suggested Fix**
+Invalidate or update the search index synchronously (or near-synchronously) on every transaction
+status transition, not only on initial transaction creation.
 
 ---
 

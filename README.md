@@ -1,4 +1,4 @@
-# 💰 Collection Engine
+# 💰 Fintech Collection Engine
 
 **A merchant payment collection platform — QA & Automation Portfolio Project**
 
